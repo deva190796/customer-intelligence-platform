@@ -44,9 +44,17 @@ def save_prediction(email, prediction, result):
 
 def get_history():
 
+    print("Using database:", DATABASE_PATH)
+
     conn = sqlite3.connect(DATABASE_PATH)
 
     cursor = conn.cursor()
+
+    cursor.execute(
+        "SELECT name FROM sqlite_master WHERE type='table';"
+    )
+
+    print("Tables:", cursor.fetchall())
 
     cursor.execute(
         """
