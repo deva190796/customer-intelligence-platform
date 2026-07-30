@@ -25,7 +25,7 @@ if st.button("Register"):
     }
 
     response = requests.post(
-        "http://127.0.0.1:8000/register",
+        "https://customer-intelligence-api-j066.onrender.com/register",
         json=payload
     )
 

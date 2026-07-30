@@ -4,37 +4,51 @@ import pandas as pd
 
 st.title("📜 Prediction History")
 
-response = requests.get(
-    "http://127.0.0.1:8000/history"
-)
+API_URL = "https://customer-intelligence-api-j066.onrender.com/history"
 
-data = response.json()
+try:
+    response = requests.get(API_URL, timeout=30)
 
-if data:
+    if response.status_code == 200:
 
-    df = pd.DataFrame(
-        data,
-        columns=[
-            "ID",
-            "Email",
-            "Prediction",
-            "Result",
-            "Timestamp"
-        ]
-    )
+        try:
+            data = response.json()
 
-    st.metric(
-        "Total Predictions",
-        len(df)
-    )
+            if data:
 
-    st.dataframe(
-        df,
-        use_container_width=True
-    )
+                df = pd.DataFrame(
+                    data,
+                    columns=[
+                        "ID",
+                        "Email",
+                        "Prediction",
+                        "Result",
+                        "Timestamp"
+                    ]
+                )
 
-else:
+                st.metric(
+                    "Total Predictions",
+                    len(df)
+                )
 
-    st.warning(
-        "No prediction history available"
-    )
+                st.dataframe(
+                    df,
+                    use_container_width=True
+                )
+
+            else:
+                st.warning("No prediction history available.")
+
+        except requests.exceptions.JSONDecodeError:
+            st.error("The backend did not return valid JSON.")
+            st.write("Response received:")
+            st.code(response.text)
+
+    else:
+        st.error(f"Backend returned status code: {response.status_code}")
+        st.code(response.text)
+
+except requests.exceptions.RequestException as e:
+    st.error("Unable to connect to the backend.")
+    st.exception(e)

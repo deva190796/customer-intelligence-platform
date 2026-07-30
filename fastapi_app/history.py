@@ -1,17 +1,14 @@
+from pathlib import Path
 import sqlite3
 
-DATABASE_PATH = "../database/customer_platform.db"
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+DATABASE_PATH = BASE_DIR / "database" / "customer_platform.db"
 
 
-def save_prediction(
-    email,
-    prediction,
-    result
-):
+def save_prediction(email, prediction, result):
 
-    conn = sqlite3.connect(
-        DATABASE_PATH
-    )
+    conn = sqlite3.connect(DATABASE_PATH)
 
     cursor = conn.cursor()
 
@@ -38,13 +35,12 @@ def save_prediction(
     )
 
     conn.commit()
-
     conn.close()
+
+
 def get_history():
 
-    conn = sqlite3.connect(
-        DATABASE_PATH
-    )
+    conn = sqlite3.connect(DATABASE_PATH)
 
     cursor = conn.cursor()
 

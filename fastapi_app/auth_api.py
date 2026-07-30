@@ -1,28 +1,24 @@
+from pathlib import Path
 import sqlite3
 
 from pydantic import BaseModel
 
-import sys
-import os
-
-sys.path.append(
-    os.path.abspath(
-        os.path.join(
-            os.path.dirname(__file__),
-            ".."
-        )
-    )
-)
-
 from src.security import hash_password
 from src.security import verify_password
 
-DATABASE_PATH = "../database/customer_platform.db"
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+DATABASE_PATH = BASE_DIR / "database" / "customer_platform.db"
 
 
 class UserRegister(BaseModel):
-
     username: str
+    email: str
+    password: str
+
+
+class UserLogin(BaseModel):
     email: str
     password: str
 
@@ -38,8 +34,8 @@ def register_user(user: UserRegister):
         cursor.execute(
             """
             INSERT INTO users
-            (username,email,password)
-            VALUES (?,?,?)
+            (username, email, password)
+            VALUES (?, ?, ?)
             """,
             (
                 user.username,
@@ -51,20 +47,20 @@ def register_user(user: UserRegister):
         conn.commit()
 
         return {
-            "message":
-            "User Registered Successfully"
+            "message": "User Registered Successfully"
         }
 
     except Exception as e:
 
         return {
-            "error":
-            str(e)
+            "error": str(e)
         }
 
     finally:
 
         conn.close()
+
+
 def login_user(email, password):
 
     conn = sqlite3.connect(DATABASE_PATH)
@@ -75,7 +71,7 @@ def login_user(email, password):
         """
         SELECT password
         FROM users
-        WHERE email=?
+        WHERE email = ?
         """,
         (email,)
     )
@@ -85,17 +81,13 @@ def login_user(email, password):
     conn.close()
 
     if row is None:
-
         return {
             "message": "Invalid Credentials"
         }
 
     stored_password = row[0]
 
-    if verify_password(
-        password,
-        stored_password
-    ):
+    if verify_password(password, stored_password):
 
         return {
             "message": "Login Successful",
@@ -105,7 +97,3 @@ def login_user(email, password):
     return {
         "message": "Invalid Credentials"
     }
-class UserLogin(BaseModel):
-
-    email: str
-    password: str

@@ -20,7 +20,7 @@ if st.button("Login"):
     }
 
     response = requests.post(
-        "http://127.0.0.1:8000/login",
+        "https://customer-intelligence-api-j066.onrender.com/login",
         json=payload
     )
 
