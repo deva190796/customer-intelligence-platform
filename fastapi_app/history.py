@@ -5,6 +5,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 DATABASE_PATH = BASE_DIR / "database" / "customer_platform.db"
 
+print("BASE_DIR:", BASE_DIR)
+print("DATABASE_PATH:", DATABASE_PATH)
+print("DATABASE EXISTS:", DATABASE_PATH.exists())
+
 
 def save_prediction(email, prediction, result):
 
